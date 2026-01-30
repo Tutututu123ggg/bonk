@@ -3,7 +3,7 @@
 TM32F429 Brick Breaker Game (TouchGFX)
 Một dự án game phá gạch (Brick Breaker) hoàn chỉnh được phát triển trên Kit STM32F429I-Discovery. Dự án kết hợp giữa giao diện đồ họa TouchGFX mượt mà và hệ thống xử lý âm thanh đa tầng (Multi-layered Sound) thông qua Bit-banging.
 
-📋 Tính năng nổi bật
+Tính năng nổi bật
 Giao diện 2 màn hình:
 
 Screen2 (Start Screen): Màn hình chờ với ảnh nền tĩnh, nút Start và hiển thị Kỷ lục (High Score).
@@ -22,7 +22,7 @@ Hệ thống kỷ lục (Persistence): High Score được lưu trữ trong Mode
 
 Cấp độ động: Paddle tự động ngắn lại mỗi khi người chơi quét sạch gạch trên màn hình để tăng độ khó.
 
-🛠 Kiến trúc hệ thống
+Kiến trúc hệ thống
 1. Đồ họa (TouchGFX MVP Pattern)
 Dự án tuân thủ mô hình Model-View-Presenter:
 
@@ -43,7 +43,7 @@ Công thức: Output = toggle_music ^ toggle_bonk;
 
 Ưu tiên nhạc buồn: Khi cờ play_sad_music bật, hệ thống dùng lệnh return để chặn hoàn toàn nhạc nền, ưu tiên âm thanh thua cuộc.
 
-🎮 Logic Game chi tiết
+Logic Game chi tiết
 Xử lý va chạm (Collision Physics)
 Bóng di chuyển dựa trên vận tốc ballVX và ballVY.
 
@@ -56,7 +56,7 @@ Khi Win: Nếu activeBrickCount == 0, hàm nextLevel() được gọi để gi�
 
 Khi Lose: 1. Kích hoạt play_sad_music. 2. Dừng logic vật lý bóng (isWaitingReset = true). 3. Đợi 120 ticks (~2 giây) bao gồm nhạc buồn và khoảng lặng. 4. Lưu highScore và thực hiện lệnh gotoScreen2ScreenNoTransition().
 
-📂 Cấu trúc thư mục quan trọng
+Cấu trúc thư mục quan trọng
 TouchGFX/gui/src/screen1_screen/: Chứa logic chính của game.
 
 TouchGFX/gui/src/model/Model.cpp: Nơi lưu trữ điểm số kỷ lục.
@@ -65,7 +65,7 @@ Core/Src/main.c: Chứa Driver âm thanh trong hàm callback của Timer.
 
 TouchGFX/assets/: Chứa hình ảnh (.png) và Font chữ (.ttf).
 
-🚀 Hướng dẫn cài đặt
+Hướng dẫn cài đặt
 Mở dự án bằng TouchGFX Designer 4.x để generate code cho các assets.
 
 Import dự án vào STM32CubeIDE.
