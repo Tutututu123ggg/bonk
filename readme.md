@@ -58,11 +58,9 @@ Hệ thống sử dụng Timer 7 với tần số ngắt 8000Hz để thực hi�
 | Thành phần | Chân (Pin) | Chế độ (Mode) | Chức năng |
 | :--- | :--- | :--- | :--- |
 | **Audio Output** | **PC3** | GPIO_Output | Tín hiệu ra loa (dương) |
-| **Ground** | **GND** | Power | Tín hiệu đất (âm) |
 | **Touch SCL** | **PA8** | I2C3_SCL | Xung nhịp cảm ứng |
 | **Touch SDA** | **PC9** | I2C3_SDA | Dữ liệu cảm ứng |
-| **Green LED** | **PG13** | GPIO_Output | Báo hiệu va chạm |
-| **Red LED** | **PG14** | GPIO_Output | Báo hiệu Game Over |
+| **Buttons** | **PG2, PG3** | GPIO_Input | Nhận tín hiệu 2 nút bấm |
 
 ## 6. Phân Công Nhiệm Vụ (Task Allocation)
 
