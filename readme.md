@@ -1,118 +1,84 @@
-# STM32F429I_DISCO_REV_D01 TBS
+# STM32F429 Brick Breaker Game (TouchGFX Integration)
 
-TM32F429 Brick Breaker Game (TouchGFX)
-Một dự án game phá gạch (Brick Breaker) hoàn chỉnh được phát triển trên Kit STM32F429I-Discovery. Dự án kết hợp giữa giao diện đồ họa TouchGFX mượt mà và hệ thống xử lý âm thanh đa tầng (Multi-layered Sound) thông qua Bit-banging.
+Dự án phát triển trò chơi phá gạch (Brick Breaker) hoàn chỉnh trên nền tảng kit STM32F429I-Discovery. Dự án tập trung vào việc tối ưu hóa hiệu năng đồ họa với TouchGFX và xây dựng hệ thống xử lý âm thanh thời gian thực thông qua kỹ thuật trộn sóng số (Digital Signal Mixing) trên một chân GPIO duy nhất.
 
-Tính năng nổi bật
-Giao diện 2 màn hình:
+## 1. Tổng Quan Tính Năng
 
-Screen2 (Start Screen): Màn hình chờ với ảnh nền tĩnh, nút Start và hiển thị Kỷ lục (High Score).
+* **Hệ thống đa màn hình:** Chuyển đổi trạng thái linh hoạt giữa màn hình khởi động (Screen2) và màn hình chơi game (Screen1).
+* **Vật lý va chạm:** Xử lý va chạm bóng dựa trên thuật toán AABB (Axis-Aligned Bounding Box) và tính toán góc nảy phản xạ dựa trên vị trí tiếp xúc với thanh chèo (Paddle).
+* **Độ khó động (Dynamic Difficulty):** Paddle tự động thu nhỏ kích thước sau mỗi lần người chơi hoàn thành một cấp độ (Level Clear).
+* **Âm thanh đa nhiệm:** Hỗ trợ phát nhạc nền và hiệu ứng âm thanh (SFX) cùng lúc bằng kỹ thuật trộn XOR, không gây trễ hệ thống.
+* **Lưu trữ dữ liệu:** Hệ thống High Score được lưu trữ tập trung tại Model, đảm bảo dữ liệu tồn tại xuyên suốt phiên làm việc.
 
-Screen1 (Gameplay): Màn hình chơi game với logic vật lý bóng, thanh chèo (Paddle) và gạch đa cấp (HP).
+## 2. Thành Phần Giao Diện (TouchGFX UI)
 
-Âm thanh đa nhiệm (Parallel Audio):
+### Screen2 (Màn hình Khởi động - Mặc định)
+* **Hình nền:** Sử dụng ảnh tĩnh được tối ưu hóa dung lượng.
+* **Nút Start:** Sử dụng Interaction gọi hàm ảo startGameClicked để chuyển sang màn hình chơi.
+* **Hiển thị Điểm cao:** TextArea sử dụng Wildcard để hiển thị giá trị High Score lấy từ Model thông qua Presenter.
 
-Nhạc nền Happy Birthday phát liên tục.
+### Screen1 (Màn hình Chơi game)
+* **Đối tượng Game:** Bao gồm Paddle, Bóng, và mảng Gạch (Bricks) được quản lý bằng Container.
+* **Bảng điểm:** Cập nhật điểm số hiện tại và điểm cao nhất theo thời gian thực mỗi khi bóng phá gạch.
+* **Điều khiển:** Sử dụng cảm ứng điện dung để cập nhật tọa độ trục X của Paddle.
 
-Hiệu ứng "Bonk" đanh gọn phát đồng thời khi bóng va chạm (không ngắt nhạc nền).
+## 3. Kỹ Thuật Xử Lý Âm Thanh và Ngắt
 
-Nhạc "Game Over" buồn bã phát duy nhất 1 lần khi thua, sau đó là khoảng lặng 1 giây trước khi chuyển màn.
+### Logic Trộn Âm (Audio Mixing)
+Hệ thống sử dụng Timer 7 với tần số ngắt 8000Hz để thực hiện kỹ thuật Bit-banging. Hai nguồn âm thanh được trộn bằng phép toán logic XOR:
 
-Hệ thống kỷ lục (Persistence): High Score được lưu trữ trong Model, tồn tại xuyên suốt khi chuyển đổi giữa các màn hình.
+* **Nhạc nền:** Tần số thấp (262Hz - 523Hz) - Giai điệu Happy Birthday.
+* **Hiệu ứng (SFX):** Tần số cao (4000Hz) - Âm thanh va chạm (Bonk).
+* **Công thức:** Output = Tin_hieu_Nhac XOR Tin_hieu_SFX.
 
-Cấp độ động: Paddle tự động ngắn lại mỗi khi người chơi quét sạch gạch trên màn hình để tăng độ khó.
+### Cơ chế Ngắt (Interrupt)
+* **Timer Interrupt:** Đảm bảo âm thanh được xuất ra đều đặn, độc lập với tốc độ khung hình (FPS) của giao diện đồ họa.
+* **Hàng đợi thông điệp (Message Queue):** Các sự kiện game (va chạm, thua cuộc) đặt cờ hiệu (Flags) để trình xử lý ngắt thực thi âm thanh tương ứng.
 
-Kiến trúc hệ thống
-1. Đồ họa (TouchGFX MVP Pattern)
-Dự án tuân thủ mô hình Model-View-Presenter:
+## 4. Logic Vận Hành Game
 
-Model: Lưu trữ dữ liệu quan trọng như highScore.
+1. **Khởi tạo (Initialization):** Hàm initLevel sử dụng bộ tạo số ngẫu nhiên phần cứng (RNG) để thiết lập chỉ số HP (1-4) cho từng viên gạch.
+2. **Vòng lặp vật lý (Game Loop):**
+   * Cập nhật vị trí bóng theo vector vận tốc.
+   * Kiểm tra va chạm với tường, gạch và Paddle.
+   * Điều chỉnh góc nảy của bóng dựa trên độ lệch tâm (Offset) khi chạm Paddle.
+3. **Xử lý Thua cuộc (Game Over):**
+   * Khi tọa độ Y của bóng vượt quá giới hạn màn hình (Y > 320).
+   * Ngắt nhạc nền, phát giai điệu buồn (Sad melody).
+   * Kích hoạt bộ đếm thời gian trễ (2 giây) trước khi lưu điểm và chuyển về Screen2.
 
-Presenter: Trung gian điều phối dữ liệu giữa Model và các View.
+## 5. Cấu Hình Phần Cứng (Hardware & Pinout)
 
-View: Xử lý hiển thị và logic game (vật lý va chạm, bộ đếm timer).
+### Danh sách thiết bị
+* Kit phát triển: STM32F429I-Discovery.
+* Thiết bị âm thanh: Loa buzzer (Passive) hoặc loa 8 Ohm.
 
-2. Xử lý âm thanh (Timer Interrupt & XOR Mixing)
-Sử dụng Timer 7 với tần số ngắt 8000Hz để điều khiển chân GPIO (PC3) nối với loa.
-
-Nhạc nền: Sử dụng mảng tần số (melody[]) và nhịp điệu (durations[]).
-
-Cơ chế Trộn âm (Mixing): Sử dụng phép toán logic XOR (^) giữa sóng nhạc nền và sóng hiệu ứng va chạm tần số cao (4000Hz).
-
-Công thức: Output = toggle_music ^ toggle_bonk;
-
-Ưu tiên nhạc buồn: Khi cờ play_sad_music bật, hệ thống dùng lệnh return để chặn hoàn toàn nhạc nền, ưu tiên âm thanh thua cuộc.
-
-Logic Game chi tiết
-Xử lý va chạm (Collision Physics)
-Bóng di chuyển dựa trên vận tốc ballVX và ballVY.
-
-Va chạm gạch: Kiểm tra AABB Collision. Mỗi viên gạch có chỉ số HP (1-4) tương ứng với độ bền.
-
-Va chạm Paddle: Tính toán offset từ tâm Paddle để điều hướng góc nảy của bóng (tâm nảy thẳng, rìa nảy chéo).
-
-Cơ chế Chuyển màn (Screen Transition)
-Khi Win: Nếu activeBrickCount == 0, hàm nextLevel() được gọi để giảm độ dài Paddle và hồi sinh gạch.
-
-Khi Lose: 1. Kích hoạt play_sad_music. 2. Dừng logic vật lý bóng (isWaitingReset = true). 3. Đợi 120 ticks (~2 giây) bao gồm nhạc buồn và khoảng lặng. 4. Lưu highScore và thực hiện lệnh gotoScreen2ScreenNoTransition().
-
-Cấu trúc thư mục quan trọng
-TouchGFX/gui/src/screen1_screen/: Chứa logic chính của game.
-
-TouchGFX/gui/src/model/Model.cpp: Nơi lưu trữ điểm số kỷ lục.
-
-Core/Src/main.c: Chứa Driver âm thanh trong hàm callback của Timer.
-
-TouchGFX/assets/: Chứa hình ảnh (.png) và Font chữ (.ttf).
-
-Hướng dẫn cài đặt
-Mở dự án bằng TouchGFX Designer 4.x để generate code cho các assets.
-
-Import dự án vào STM32CubeIDE.
-
-Cấu hình chân PC3 là GPIO_Output (nối với loa/buzzer).
-
-Cấu hình Timer 7 với chu kỳ ngắt 125us (8000Hz).
-
-Build và nạp code xuống Kit STM32F429I-Discovery.
-
-Điều khiển
-Sử dụng các nút nhấn hoặc màn hình cảm ứng (tùy biến theo Model) để di chuyển Paddle sang trái/phải.
-
-Dự án game phá gạch (Brick Breaker) hoàn chỉnh trên kit **STM32F429I-Discovery**, kết hợp giữa đồ họa TouchGFX mượt mà và hệ thống âm thanh đa tầng xử lý bằng ngắt Timer.
-
----
-
-##  Tính năng nổi bật
-* **Hệ thống 2 màn hình:**
-    * **Start Screen (Screen2):** Giao diện chờ, hiển thị Kỷ lục (High Score) và nút bắt đầu.
-    * **Gameplay (Screen1):** Logic vật lý bóng, thanh chèo (Paddle) và gạch đa cấp (HP).
-* **Âm thanh đa nhiệm (XOR Mixing):** * Nhạc nền **Happy Birthday** phát liên tục.
-    * Hiệu ứng **"Bonk"** đanh gọn khi va chạm mà không làm ngắt nhạc nền.
-    * Nhạc **"Game Over"** buồn bã kèm khoảng lặng 1 giây trước khi reset.
-* **Hệ thống MVP:** Quản lý dữ liệu High Score xuyên suốt giữa các màn hình thông qua Model.
-* **Độ khó tăng tiến:** Paddle tự động ngắn lại mỗi khi qua màn.
-
----
-
-##  Phân Công Nhiệm Vụ (Project Task Allocation)
-
-| Thành viên | Vai trò | Nhiệm vụ chi tiết | Công cụ |
-| :--- | :--- | :--- | :--- |
-| **Tống Phú Lâm** | **Embedded & Audio** | • Cấu hình Hardware (Clock, Timer, RNG, GPIO).<br>• Lập trình Driver âm thanh (XOR Mixing logic).<br>• Soạn nhạc (Happy Birthday & Sad Melody).<br>• Tối ưu hóa ngắt (Interrupt). | CubeMX, IDE |
-| **Hoàng Quốc Hùng** | **UI/UX Designer** | • Thiết kế giao diện (Screen1, Screen2) trên Designer.<br>• Quản lý Assets (Hình ảnh, Fonts, Buttons).<br>• Thiết lập Interaction/Transition giữa các màn hình.<br>• Xử lý hiển thị Wildcards cho điểm số. | TouchGFX Designer |
-| **Đỗ Đức Tú** | **Game Logic** | • Lập trình vật lý bóng (Va chạm AABB, góc nảy).<br>• Triển khai mô hình MVP (Model-View-Presenter).<br>• Xử lý Logic Game (Tăng cấp, giảm độ dài Paddle).<br>• Quản lý trạng thái Game Over & Persistence. | C++ |
-
----
-
-##  Cấu Hình Chân Cắm (Pinout)
+### Sơ đồ chân (Pinout Table)
 
 | Thành phần | Chân (Pin) | Chế độ (Mode) | Chức năng |
 | :--- | :--- | :--- | :--- |
-| **Loa (Buzzer)** | **PC3** | GPIO_Output | Phát nhạc & Hiệu ứng (XOR Mixing) |
-| **Màn hình LCD** | **Nhiều chân** | LTDC | Hiển thị giao diện 240x320 |
-| **Touchscreen** | **PA8, PC9** | I2C3 | Nhận tín hiệu điều khiển Paddle |
+| **Audio Output** | **PC3** | GPIO_Output | Tín hiệu ra loa (dương) |
+| **Ground** | **GND** | Power | Tín hiệu đất (âm) |
+| **Touch SCL** | **PA8** | I2C3_SCL | Xung nhịp cảm ứng |
+| **Touch SDA** | **PC9** | I2C3_SDA | Dữ liệu cảm ứng |
+| **Green LED** | **PG13** | GPIO_Output | Báo hiệu va chạm |
+| **Red LED** | **PG14** | GPIO_Output | Báo hiệu Game Over |
+
+## 6. Phân Công Nhiệm Vụ (Task Allocation)
+
+| Thành viên | Vai trò | Nhiệm vụ chi tiết | Công cụ |
+| :--- | :--- | :--- | :--- |
+| **Tống Phú Lâm** | **Embedded & Audio** | Cấu hình Clock, Timer, RNG, GPIO. Lập trình Driver âm thanh (XOR Mixing). Soạn nhạc. Tối ưu ngắt. | CubeMX, IDE |
+| **Hoàng Quốc Hùng** | **UI/UX Designer** | Thiết kế giao diện Screen1, Screen2. Quản lý tài nguyên ảnh, font. Thiết lập Interaction chuyển màn. | TouchGFX Designer |
+| **Đỗ Đức Tú** | **Game Logic** | Lập trình vật lý bóng, va chạm AABB. Triển khai mô hình MVP. Xử lý logic tăng cấp độ và lưu điểm. | C++, STM32CubeIDE |
+
+## 7. Hướng Dẫn Cài Đặt và Chạy
+
+1. **Chuẩn bị tài nguyên:** Mở tệp .touchgfx bằng TouchGFX Designer, nhấn "Generate Code" để tạo mã nguồn giao diện.
+2. **Biên dịch:** Mở dự án bằng STM32CubeIDE. Thực hiện "Clean Project" sau đó "Build Project" để đảm bảo không có lỗi liên kết.
+3. **Nạp chương trình:** Kết nối kit STM32F429I-Discovery với máy tính qua cổng USB ST-Link. Nhấn "Run" để nạp code.
+4. **Kết nối phần cứng:** Nối chân dương của loa vào PC3 và chân âm vào GND.
 
 ---
-
-
+**Nhóm phát triển: 3 Thành viên**
+**Năm thực hiện: 2026**
