@@ -80,5 +80,9 @@ Hệ thống sử dụng Timer 7 với tần số ngắt 8000Hz để thực hi�
 4. **Kết nối phần cứng:** Nối chân dương của loa vào PC3 và chân âm vào GND.
 
 ---
-**Nhóm phát triển: 3 Thành viên**
+**Nhóm phát triển: Thú Mỏ Vịt**
 **Năm thực hiện: 2026**
+
+
+
+
