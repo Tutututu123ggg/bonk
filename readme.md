@@ -79,14 +79,40 @@ Build và nạp code xuống Kit STM32F429I-Discovery.
 Điều khiển
 Sử dụng các nút nhấn hoặc màn hình cảm ứng (tùy biến theo Model) để di chuyển Paddle sang trái/phải.
 
+Dự án game phá gạch (Brick Breaker) hoàn chỉnh trên kit **STM32F429I-Discovery**, kết hợp giữa đồ họa TouchGFX mượt mà và hệ thống âm thanh đa tầng xử lý bằng ngắt Timer.
 
-### Bảng chân cắm
+---
 
-| Peripheral | Pin | Mode | Description |
+## 📋 Tính năng nổi bật
+* **Hệ thống 2 màn hình:**
+    * **Start Screen (Screen2):** Giao diện chờ, hiển thị Kỷ lục (High Score) và nút bắt đầu.
+    * **Gameplay (Screen1):** Logic vật lý bóng, thanh chèo (Paddle) và gạch đa cấp (HP).
+* **Âm thanh đa nhiệm (XOR Mixing):** * Nhạc nền **Happy Birthday** phát liên tục.
+    * Hiệu ứng **"Bonk"** đanh gọn khi va chạm mà không làm ngắt nhạc nền.
+    * Nhạc **"Game Over"** buồn bã kèm khoảng lặng 1 giây trước khi reset.
+* **Hệ thống MVP:** Quản lý dữ liệu High Score xuyên suốt giữa các màn hình thông qua Model.
+* **Độ khó tăng tiến:** Paddle tự động ngắn lại mỗi khi qua màn.
+
+---
+
+## 👥 Phân Công Nhiệm Vụ (Project Task Allocation)
+
+| Thành viên | Vai trò | Nhiệm vụ chi tiết | Công cụ |
 | :--- | :--- | :--- | :--- |
-| **Audio Output** | PC3 | GPIO_Output | PWM/Bit-banging for Music & SFX |
-| **Touch SCL** | PA8 | I2C3_SCL | Clock line for Touchscreen |
-| **Touch SDA** | PC9 | I2C3_SDA | Data line for Touchscreen |
-| **Green LED** | PG13 | GPIO_Output | Status: Ball Collision / Win |
-| **Red LED** | PG14 | GPIO_Output | Status: Game Over |
-| **User Button** | PA0 | GPIO_Input | Optional Start/Reset Button |
+| **Tống Phú Lâm** | **Embedded & Audio** | • Cấu hình Hardware (Clock, Timer, RNG, GPIO).<br>• Lập trình Driver âm thanh (XOR Mixing logic).<br>• Soạn nhạc (Happy Birthday & Sad Melody).<br>• Tối ưu hóa ngắt (Interrupt). | CubeMX, IDE |
+| **Hoàng Quốc Hùng** | **UI/UX Designer** | • Thiết kế giao diện (Screen1, Screen2) trên Designer.<br>• Quản lý Assets (Hình ảnh, Fonts, Buttons).<br>• Thiết lập Interaction/Transition giữa các màn hình.<br>• Xử lý hiển thị Wildcards cho điểm số. | TouchGFX Designer |
+| **Đỗ Đức Tú** | **Game Logic** | • Lập trình vật lý bóng (Va chạm AABB, góc nảy).<br>• Triển khai mô hình MVP (Model-View-Presenter).<br>• Xử lý Logic Game (Tăng cấp, giảm độ dài Paddle).<br>• Quản lý trạng thái Game Over & Persistence. | C++ |
+
+---
+
+## 🔌 Cấu Hình Chân Cắm (Pinout)
+
+| Thành phần | Chân (Pin) | Chế độ (Mode) | Chức năng |
+| :--- | :--- | :--- | :--- |
+| **Loa (Buzzer)** | **PC3** | GPIO_Output | Phát nhạc & Hiệu ứng (XOR Mixing) |
+| **Màn hình LCD** | **Nhiều chân** | LTDC | Hiển thị giao diện 240x320 |
+| **Touchscreen** | **PA8, PC9** | I2C3 | Nhận tín hiệu điều khiển Paddle |
+
+---
+
+
