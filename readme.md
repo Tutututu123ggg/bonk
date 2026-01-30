@@ -1,4 +1,4 @@
-# STM32F429 Brick Breaker Game (TouchGFX Integration)
+# STM32F429 Bonk! Game (TouchGFX Integration)
 
 Dự án phát triển trò chơi phá gạch (Brick Breaker) hoàn chỉnh trên nền tảng kit STM32F429I-Discovery. Dự án tập trung vào việc tối ưu hóa hiệu năng đồ họa với TouchGFX và xây dựng hệ thống xử lý âm thanh thời gian thực thông qua kỹ thuật trộn sóng số (Digital Signal Mixing) trên một chân GPIO duy nhất.
 
