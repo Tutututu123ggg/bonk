@@ -66,9 +66,9 @@ Hệ thống sử dụng Timer 7 với tần số ngắt 8000Hz để thực hi�
 
 | Thành viên | Vai trò | Nhiệm vụ chi tiết | Công cụ |
 | :--- | :--- | :--- | :--- |
-| **Tống Phú Lâm** | **Embedded & Audio** | Cấu hình Clock, Timer, RNG, GPIO. Lập trình Driver âm thanh (XOR Mixing). Soạn nhạc. Tối ưu ngắt. | CubeMX, IDE |
-| **Hoàng Quốc Hùng** | **UI/UX Designer** | Thiết kế giao diện Screen1, Screen2. Quản lý tài nguyên ảnh, font. Thiết lập Interaction chuyển màn. | TouchGFX Designer |
-| **Đỗ Đức Tú** | **Game Logic** | Lập trình vật lý bóng, va chạm AABB. Triển khai mô hình MVP. Xử lý logic tăng cấp độ và lưu điểm. | C++, STM32CubeIDE |
+| **Tống Phú Lâm - 20224870** | **Embedded & Audio** | Cấu hình Clock, Timer, RNG, GPIO. Lập trình Driver âm thanh (XOR Mixing). Soạn nhạc. Tối ưu ngắt. | CubeMX, IDE |
+| **Hoàng Quốc Hùng - 20224857** | **UI/UX Designer** | Thiết kế giao diện Screen1, Screen2. Quản lý tài nguyên ảnh, font. Thiết lập Interaction chuyển màn. | TouchGFX Designer |
+| **Đỗ Đức Tú - 20225106** | **Game Logic** | Lập trình vật lý bóng, va chạm AABB. Triển khai mô hình MVP. Xử lý logic tăng cấp độ và lưu điểm. | C++, STM32CubeIDE |
 
 ## 7. Hướng Dẫn Cài Đặt và Chạy
 
@@ -79,6 +79,7 @@ Hệ thống sử dụng Timer 7 với tần số ngắt 8000Hz để thực hi�
 
 ---
 **Nhóm phát triển: Thú Mỏ Vịt**
+
 **Năm thực hiện: 2026**
 
 
