@@ -78,3 +78,10 @@ Build và nạp code xuống Kit STM32F429I-Discovery.
 
 Điều khiển
 Sử dụng các nút nhấn hoặc màn hình cảm ứng (tùy biến theo Model) để di chuyển Paddle sang trái/phải.
+
+
+Chân cắm 
+Thành phần,Chân STM32,Chế độ,Ghi chú
+Loa (Buzzer),PC3,GPIO_Output,Nối qua điện trở 100-220Ω
+RNG,Nội bộ,Hardware,Dùng để tạo vị trí gạch ngẫu nhiên
+LCD,LTDC Interface,RGB565,Màn hình 240x320
