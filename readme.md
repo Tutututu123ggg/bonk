@@ -76,5 +76,5 @@ Cấu hình Timer 7 với chu kỳ ngắt 125us (8000Hz).
 
 Build và nạp code xuống Kit STM32F429I-Discovery.
 
-🕹 Điều khiển
+Điều khiển
 Sử dụng các nút nhấn hoặc màn hình cảm ứng (tùy biến theo Model) để di chuyển Paddle sang trái/phải.
