@@ -83,7 +83,7 @@ Dự án game phá gạch (Brick Breaker) hoàn chỉnh trên kit **STM32F429I-D
 
 ---
 
-## 📋 Tính năng nổi bật
+##  Tính năng nổi bật
 * **Hệ thống 2 màn hình:**
     * **Start Screen (Screen2):** Giao diện chờ, hiển thị Kỷ lục (High Score) và nút bắt đầu.
     * **Gameplay (Screen1):** Logic vật lý bóng, thanh chèo (Paddle) và gạch đa cấp (HP).
@@ -95,7 +95,7 @@ Dự án game phá gạch (Brick Breaker) hoàn chỉnh trên kit **STM32F429I-D
 
 ---
 
-## 👥 Phân Công Nhiệm Vụ (Project Task Allocation)
+##  Phân Công Nhiệm Vụ (Project Task Allocation)
 
 | Thành viên | Vai trò | Nhiệm vụ chi tiết | Công cụ |
 | :--- | :--- | :--- | :--- |
@@ -105,7 +105,7 @@ Dự án game phá gạch (Brick Breaker) hoàn chỉnh trên kit **STM32F429I-D
 
 ---
 
-## 🔌 Cấu Hình Chân Cắm (Pinout)
+##  Cấu Hình Chân Cắm (Pinout)
 
 | Thành phần | Chân (Pin) | Chế độ (Mode) | Chức năng |
 | :--- | :--- | :--- | :--- |
